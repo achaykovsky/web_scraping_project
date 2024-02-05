@@ -1,1 +1,1 @@
-# web_scraping_project
+# Animal Collateral Adjective Scraper
