@@ -2,7 +2,6 @@ import logging
 
 from scrapping import get_animal_names_and_adjectives, logger
 
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 
 if __name__ == "__main__":
