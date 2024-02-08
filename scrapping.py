@@ -74,11 +74,9 @@ def extract_animal_info(soup):
             for table in tables:
                 rows = table.find_all("tr")
 
-                collective_noun_index, collateral_adjective_index = find_column_indices(
-                    rows[0]
-                )
+                animal_index, collateral_adjective_index = find_column_indices(rows[0])
 
-                if collective_noun_index is None or collateral_adjective_index is None:
+                if animal_index is None or collateral_adjective_index is None:
                     continue
 
                 for row in rows[1:]:
@@ -87,22 +85,10 @@ def extract_animal_info(soup):
                     if len(columns) >= 2:
                         # there are rows that are grouped and are not relevant for the task,
                         # it's a validation that we have at least 2 columns
-                        text_from_animal_column = columns[
-                            collective_noun_index
-                        ].get_text(strip=True)
-                        animals_name = strip_non_letters(text_from_animal_column).split(
-                            ","
-                        )
-                        animals_list = remove_invalid_words(animals_name)
+                        animals_list = clean_cell(animal_index, columns)
 
-                        text_from_adjective_column = columns[
-                            collateral_adjective_index
-                        ].get_text(strip=True)
-                        collateral_adjectives = strip_non_letters(
-                            text_from_adjective_column
-                        ).split(",")
-                        collateral_adjective_list = remove_invalid_words(
-                            collateral_adjectives
+                        collateral_adjective_list = clean_cell(
+                            collateral_adjective_index, columns
                         )
 
                         log_animal_info(collateral_adjective_list, animals_list)
@@ -110,6 +96,13 @@ def extract_animal_info(soup):
                         logger.warning("Row does not have enough columns. Skipping.")
     except Exception as e:
         logger.error(f"An error occurred while extracting animal info: {e}")
+
+
+def clean_cell(cell_index, columns):
+    text_from_object_column = columns[cell_index].get_text(strip=True)
+    object_name = strip_non_letters(text_from_object_column).split(",")
+    object_list = remove_invalid_words(object_name)
+    return object_list
 
 
 # list all the possible permutations for adjectives and animals
