@@ -101,7 +101,7 @@ def extract_animal_info(soup):
 def clean_cell(cell_index, columns):
     text_from_object_column = columns[cell_index].get_text(strip=True)
     object_name = strip_non_letters(text_from_object_column).split(",")
-    object_list = remove_invalid_words(object_name)
+    object_list = filter_invalid_words(object_name)
     return object_list
 
 
@@ -119,11 +119,12 @@ def validate_word_existence(word):
     return True
 
 
-def remove_invalid_words(words_list: List) -> List:
-    for word in words_list:
-        if word.lower() in INVALID_WORDS_VOC or not validate_word_existence(word):
-            words_list.remove(word)
-    return words_list
+def filter_invalid_words(words_list: List) -> List:
+    return [
+        word
+        for word in words_list
+        if word.lower() not in INVALID_WORDS_VOC and validate_word_existence(word)
+    ]
 
 
 def get_animal_names_and_adjectives(url):
